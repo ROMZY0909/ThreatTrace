@@ -1,0 +1,13 @@
+# 🔐 Fichiers sensibles à ignorer
+.env
+
+# 📦 Environnement virtuel Python
+env/
+
+# 🧠 Caches Python
+__pycache__/
+*.pyc
+
+# 💻 Fichiers système (macOS, Windows)
+.DS_Store
+Thumbs.db

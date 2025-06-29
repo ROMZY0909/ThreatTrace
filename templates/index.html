@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>🛡️ ThreatTrace AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            padding: 2rem;
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #58a6ff;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 2rem;
+        }
+        input, button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border-radius: 6px;
+            border: none;
+        }
+        input {
+            background-color: #161b22;
+            color: #c9d1d9;
+        }
+        button {
+            background-color: #238636;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .result-block {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #161b22;
+            border-left: 4px solid #58a6ff;
+        }
+        a {
+            color: #3fb950;
+        }
+        .flash {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+        .flash.success {
+            background-color: #1f6feb;
+        }
+        .flash.error {
+            background-color: #da3633;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>🛡️ ThreatTrace AI</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label>Adresse IP :
+                <input type="text" name="ip" placeholder="ex: 8.8.8.8" required>
+            </label>
+            <label>Recevoir le rapport par e-mail (optionnel) :
+                <input type="email" name="email" placeholder="votre@email.com">
+            </label>
+            <button type="submit">Analyser</button>
+        </form>
+
+        {% if result %}
+            {% if result.ipapi %}
+                <div class="result-block">
+                    <h3>🌍 IP-API</h3>
+                    {% if result.ipapi.error %}
+                        <p>Erreur : {{ result.ipapi.error }}</p>
+                    {% else %}
+                        <ul>
+                            <li>IP : {{ result.ipapi.ip }}</li>
+                            <li>Pays : {{ result.ipapi.country }}</li>
+                            <li>Région : {{ result.ipapi.region }}</li>
+                            <li>Ville : {{ result.ipapi.city }}</li>
+                            <li>Organisation : {{ result.ipapi.org }}</li>
+                            <li>Fournisseur : {{ result.ipapi.isp }}</li>
+                            <li>Fuseau horaire : {{ result.ipapi.timezone }}</li>
+                            <li>
+                                📍 <a href="{{ result.ipapi.google_maps_link }}" target="_blank" rel="noopener noreferrer">
+                                    Voir sur Google Maps
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if result.abuseipdb %}
+                <div class="result-block">
+                    <h3>🛡️ AbuseIPDB</h3>
+                    {% if result.abuseipdb.error %}
+                        <p>Erreur : {{ result.abuseipdb.error }}</p>
+                    {% else %}
+                        <ul>
+                            <li>IP : {{ result.abuseipdb.ip }}</li>
+                            <li>Score de confiance (abus) : {{ result.abuseipdb.abuseConfidenceScore }}</li>
+                            <li>Nombre de signalements : {{ result.abuseipdb.totalReports }}</li>
+                            <li>Dernier signalement : {{ result.abuseipdb.lastReportedAt }}</li>
+                            <li>Usage : {{ result.abuseipdb.usageType }}</li>
+                            <li>Domaine : {{ result.abuseipdb.domain }}</li>
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if result.shodan %}
+                <div class="result-block">
+                    <h3>📡 Shodan</h3>
+                    {% if result.shodan.error %}
+                        <p>Erreur : {{ result.shodan.error }}</p>
+                    {% else %}
+                        <ul>
+                            <li>IP : {{ result.shodan.ip_str }}</li>
+                            <li>Organisation : {{ result.shodan.org }}</li>
+                            <li>OS : {{ result.shodan.os or "Inconnu" }}</li>
+                            <li>Hostnames : {{ result.shodan.hostnames | join(', ') }}</li>
+                            <li>Ports ouverts : {{ result.shodan.ports | join(', ') }}</li>
+                            {% if result.shodan.services %}
+                                <li>🔎 Services détectés :
+                                    <ul>
+                                        {% for s in result.shodan.services %}
+                                            <li>Port {{ s.port }}/{{ s.transport }} : {{ s.product or "Non identifié" }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </main>
+</body>
+</html>

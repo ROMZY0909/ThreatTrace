@@ -1,0 +1,16 @@
+Rapport CYBERSCAN PRO+ – rti.ci
+Adresse IP : 135.125.76.89
+Nom de machine : ip89.ip-135-125-76.eu
+OS estimé : Linux/Unix
+Résultat du ping : Paquetsÿ: envoy‚s = 3, re‡us = 3, perdus = 0 (perte 0%),
+Ports scannés :
+✅ Port 22 ouvert
+    Bannière : SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.13
+✅ Port 80 ouvert
+    Aucune bannière détectée
+✅ Port 443 ouvert
+    Aucune bannière détectée
+❌ Port 3306 fermé
+
+HTTPS : actif
+Graphique ASCII ports : ■ ■ ■ □ 
