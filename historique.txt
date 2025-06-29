@@ -1,19 +1,13 @@
-2025-06-28 19:19:46 - Résolution IP : rti.ci → 135.125.76.89
-2025-06-28 19:19:48 - Ping → Paquetsÿ: envoy‚s = 3, re‡us = 3, perdus = 0 (perte 0%),
-2025-06-28 19:19:48 - TTL 40 → OS estimé : Linux/Unix
-2025-06-28 19:19:48 - Reverse DNS : 135.125.76.89 → ip89.ip-135-125-76.eu
-2025-06-28 19:19:55 - Scan ports :
-✅ Port 22 ouvert
-    Bannière : SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.13
+2025-06-29 23:51:45 - Résolution IP : www.facebook.com → 157.240.212.35
+2025-06-29 23:51:47 - Ping → Paquetsÿ: envoy‚s = 3, re‡us = 3, perdus = 0 (perte 0%),
+2025-06-29 23:51:47 - TTL 43 → OS estimé : Linux/Unix
+2025-06-29 23:51:47 - Reverse DNS : 157.240.212.35 → edge-star-mini-shv-01-lis1.facebook.com
+2025-06-29 23:51:55 - Scan ports :
+❌ Port 22 fermé
 ✅ Port 80 ouvert
     Aucune bannière détectée
 ✅ Port 443 ouvert
     Aucune bannière détectée
 ❌ Port 3306 fermé
-2025-06-28 19:19:55 - HTTP GET → HTTP/1.1 301 Moved Permanently
-2025-06-28 19:19:56 - HTTPS : actif
-2025-06-28 19:19:56 - Sous-domaine trouvé : www.rti.ci → 135.125.76.89
-2025-06-28 19:19:56 - Sous-domaine trouvé : mail.rti.ci → 20.246.118.126
-2025-06-28 19:19:56 - Sous-domaine trouvé : admin.rti.ci → 5.39.121.20
-2025-06-28 19:19:56 - Sous-domaine trouvé : webmail.rti.ci → 154.68.41.170
-2025-06-28 19:19:56 - Sous-domaine trouvé : ftp.rti.ci → 135.125.76.89
+2025-06-29 23:51:56 - HTTP GET → HTTP/1.1 301 Moved Permanently
+2025-06-29 23:51:56 - HTTPS : actif
