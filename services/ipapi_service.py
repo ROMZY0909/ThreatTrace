@@ -2,13 +2,16 @@
 
 import requests
 
-def scan_ip(ip):
+def get_ipapi_data(ip):
     try:
         url = f"http://ip-api.com/json/{ip}"
-        response = requests.get(url, timeout=5)
+        headers = {"User-Agent": "ThreatTraceAI/1.0"}
+        response = requests.get(url, headers=headers, timeout=5)
+
         if response.status_code == 200:
             raw = response.json()
-            if raw["status"] == "fail":
+
+            if raw.get("status") == "fail":
                 return {"error": f"Erreur API ip-api : {raw.get('message', 'inconnue')}"}
 
             data = {
@@ -24,14 +27,14 @@ def scan_ip(ip):
             }
 
             if data["lat"] is not None and data["lon"] is not None:
-                lat = str(data["lat"]).strip()
-                lon = str(data["lon"]).strip()
-                data["google_maps_link"] = f"https://www.google.com/maps?q={lat},{lon}"
+                data["google_maps_link"] = f"https://www.google.com/maps?q={data['lat']},{data['lon']}"
             else:
                 data["google_maps_link"] = None
 
             return data
+
         else:
-            return {"error": "Erreur HTTP ip-api"}
+            return {"error": f"Erreur HTTP ip-api : {response.status_code}"}
+
     except Exception as e:
         return {"error": f"Erreur ip-api: {str(e)}"}
