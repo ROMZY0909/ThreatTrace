@@ -1,117 +1,39 @@
+## === templates/index.html ===
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ThreatTrace AI</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: #f1f5f9;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #38bdf8;
-        }
-        form {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: none;
-            border-radius: 4px;
-        }
-        button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: #38bdf8;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .result-block {
-            background: #1e293b;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-        }
-        a {
-            color: #60a5fa;
-        }
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-    </style>
 </head>
 <body>
-
-    <h1>🔎 ThreatTrace AI</h1>
+    <h1>Analyseur d'IP ThreatTrace</h1>
     <form method="POST">
-        <label>Adresse IP à analyser :</label>
-        <input type="text" name="ip" placeholder="Ex : 8.8.8.8" required>
-
-        <label>Votre email (optionnel) :</label>
-        <input type="email" name="email" placeholder="exemple@mail.com">
-
-        <button type="submit">Lancer l'analyse</button>
+        <label for="ip">Adresse IP :</label>
+        <input type="text" name="ip" id="ip" required>
+        <br>
+        <label for="email">Email (optionnel) :</label>
+        <input type="email" name="email" id="email">
+        <br>
+        <button type="submit">Analyser</button>
     </form>
 
     {% if message %}
-        <div class="result-block">
-            <strong>{{ message }}</strong>
-        </div>
+        <p>{{ message }}</p>
     {% endif %}
 
-    {% if ipapi_result and not ipapi_result.error %}
-        <div class="result-block">
-            <h2>🌍 Résultats IP-API</h2>
-            <p><strong>IP :</strong> {{ ipapi_result.ip }}</p>
-            <p><strong>Pays :</strong> {{ ipapi_result.country }}</p>
-            <p><strong>Région :</strong> {{ ipapi_result.region }}</p>
-            <p><strong>Ville :</strong> {{ ipapi_result.city }}</p>
-            <p><strong>Fournisseur :</strong> {{ ipapi_result.org }}</p>
-            <p><strong>ISP :</strong> {{ ipapi_result.isp }}</p>
-            <p><strong>Fuseau horaire :</strong> {{ ipapi_result.timezone }}</p>
-            {% if ipapi_result.google_maps_link %}
-                <p><strong>🗺️ Google Maps :</strong>
-                    <a href="{{ ipapi_result.google_maps_link }}" target="_blank">
-                        Voir la position
-                    </a>
-                </p>
-            {% endif %}
-        </div>
-    {% elif ipapi_result.error %}
-        <div class="result-block">
-            <strong>Erreur IP-API :</strong> {{ ipapi_result.error }}
-        </div>
+    {% if ipapi_result %}
+        <h2>Résultat IP-API</h2>
+        <pre>{{ ipapi_result }}</pre>
     {% endif %}
 
     {% if abuseipdb_result %}
-        <div class="result-block">
-            <h2>🛡️ Résultats AbuseIPDB</h2>
-            <pre>{{ abuseipdb_result | tojson(indent=2) }}</pre>
-        </div>
+        <h2>Résultat AbuseIPDB</h2>
+        <pre>{{ abuseipdb_result }}</pre>
     {% endif %}
 
     {% if shodan_result %}
-        <div class="result-block">
-            <h2>🔍 Résultats Shodan</h2>
-            <pre>{{ shodan_result | tojson(indent=2) }}</pre>
-        </div>
+        <h2>Résultat Shodan</h2>
+        <pre>{{ shodan_result }}</pre>
     {% endif %}
-
 </body>
 </html>

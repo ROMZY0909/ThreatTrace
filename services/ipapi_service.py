@@ -1,19 +1,14 @@
-# services/ipapi_service.py
-
+## === services/ipapi_service.py ===
 import requests
 
 def get_ipapi_data(ip):
     try:
         url = f"http://ip-api.com/json/{ip}"
-        headers = {"User-Agent": "ThreatTraceAI/1.0"}
-        response = requests.get(url, headers=headers, timeout=5)
-
+        response = requests.get(url, timeout=5)
         if response.status_code == 200:
             raw = response.json()
-
-            if raw.get("status") == "fail":
+            if raw["status"] == "fail":
                 return {"error": f"Erreur API ip-api : {raw.get('message', 'inconnue')}"}
-
             data = {
                 "ip": ip,
                 "country": raw.get("country"),
@@ -25,16 +20,14 @@ def get_ipapi_data(ip):
                 "timezone": raw.get("timezone"),
                 "isp": raw.get("isp")
             }
-
             if data["lat"] is not None and data["lon"] is not None:
-                data["google_maps_link"] = f"https://www.google.com/maps?q={data['lat']},{data['lon']}"
+                lat = str(data["lat"]).strip()
+                lon = str(data["lon"]).strip()
+                data["google_maps_link"] = f"https://www.google.com/maps?q={lat},{lon}"
             else:
                 data["google_maps_link"] = None
-
             return data
-
         else:
-            return {"error": f"Erreur HTTP ip-api : {response.status_code}"}
-
+            return {"error": "Erreur HTTP ip-api"}
     except Exception as e:
         return {"error": f"Erreur ip-api: {str(e)}"}
