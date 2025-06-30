@@ -4,35 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <title>ThreatTrace AI</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2rem;
+        }
+        h1, h2 {
+            color: #00ff99;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+        form {
+            background-color: #1a1a1a;
+            padding: 1rem;
+            border: 1px solid #00ffcc;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        input, button {
+            background-color: #0f0f0f;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+        pre {
+            background-color: #111;
+            border: 1px solid #00ffcc;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Analyseur d'IP ThreatTrace</h1>
+    <h1>🛡️ ThreatTrace AI - Analyse IP</h1>
     <form method="POST">
         <label for="ip">Adresse IP :</label>
         <input type="text" name="ip" id="ip" required>
-        <br>
         <label for="email">Email (optionnel) :</label>
         <input type="email" name="email" id="email">
-        <br>
         <button type="submit">Analyser</button>
     </form>
 
     {% if message %}
-        <p>{{ message }}</p>
+        <p><strong>{{ message }}</strong></p>
     {% endif %}
 
     {% if ipapi_result %}
-        <h2>Résultat IP-API</h2>
+        <h2>🌐 IP-API</h2>
         <pre>{{ ipapi_result }}</pre>
     {% endif %}
 
     {% if abuseipdb_result %}
-        <h2>Résultat AbuseIPDB</h2>
+        <h2>🚨 AbuseIPDB</h2>
         <pre>{{ abuseipdb_result }}</pre>
     {% endif %}
 
     {% if shodan_result %}
-        <h2>Résultat Shodan</h2>
+        <h2>🔍 Shodan</h2>
         <pre>{{ shodan_result }}</pre>
     {% endif %}
 </body>

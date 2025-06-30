@@ -34,9 +34,9 @@ def index():
                 if email:
                     try:
                         send_report_email(email, ipapi_result, abuseipdb_result, shodan_result)
-                        message = f"\ud83d\udce7 Rapport envoy\u00e9 \u00e0 {email}"
+                        message = f"📧 Rapport envoyé à {email}"
                     except Exception as e:
-                        message = f"\u274c Erreur email : {e}"
+                        message = f"❌ Erreur email : {e}"
 
                 save_full_log(
                     email=email,
@@ -48,7 +48,7 @@ def index():
                 )
 
             except Exception as e:
-                message = f"\u274c Erreur lors du scan : {e}"
+                message = f"❌ Erreur lors du scan : {e}"
 
     return render_template("index.html",
         ipapi_result=ipapi_result,
