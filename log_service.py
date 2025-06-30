@@ -1,63 +1,42 @@
-from flask import Flask, render_template, request
-from services.ipapi_service import scan_ip
-from services.abuseipdb_service import get_abuseipdb_data
-from services.shodan_service import get_shodan_info
-from services.email_service import send_report_email, init_mail
-from services.log_service import save_full_log
-from dotenv import load_dotenv
+# services/log_service.py
+
 import os
+from datetime import datetime
 
-load_dotenv()
+def save_full_log(email, user_ip, scanned_ip, ipapi_data, abuseipdb_data, shodan_data):
+    """
+    Enregistre un log complet de l'analyse IP dans un fichier texte horodaté.
 
-app = Flask(__name__)
-init_mail(app)
+    Paramètres :
+    - email (str) : adresse email de l'utilisateur (peut être vide)
+    - user_ip (str) : adresse IP réelle de l'utilisateur (request.remote_addr)
+    - scanned_ip (str) : adresse IP entrée et scannée
+    - ipapi_data (dict) : résultat de l'API ip-api
+    - abuseipdb_data (dict) : résultat de l'API AbuseIPDB
+    - shodan_data (dict) : résultat de l'API Shodan
+    """
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    ipapi_result = {}
-    abuseipdb_result = {}
-    shodan_result = {}
-    message = ""
+    # Crée le dossier "logs" s'il n'existe pas
+    log_dir = "logs"
+    os.makedirs(log_dir, exist_ok=True)
 
-    if request.method == "POST":
-        ip = request.form.get("ip")
-        email = request.form.get("email")
-        user_ip = request.remote_addr
+    # Nom du fichier : log_YYYYMMDD_HHMMSS.txt
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"log_{timestamp}.txt"
+    filepath = os.path.join(log_dir, filename)
 
-        if ip:
-            try:
-                # 🔍 Analyse via API
-                ipapi_result = scan_ip(ip)
-                abuseipdb_result = get_abuseipdb_data(ip)
-                shodan_result = get_shodan_info(ip)
+    # Construction du contenu du log
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("=== THREATTRACE AI – Rapport d'analyse IP ===\n")
+        f.write(f"📅 Date        : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"🧑‍💻 IP Utilisateur : {user_ip}\n")
+        f.write(f"🔍 IP Scannée   : {scanned_ip}\n")
+        f.write(f"📧 Email        : {email or 'Non fourni'}\n")
+        f.write("\n--- Résultats IP-API ---\n")
+        f.write(str(ipapi_data) + "\n")
+        f.write("\n--- Résultats AbuseIPDB ---\n")
+        f.write(str(abuseipdb_data) + "\n")
+        f.write("\n--- Résultats Shodan ---\n")
+        f.write(str(shodan_data) + "\n")
 
-                # 📤 Envoi de l'email si fourni
-                if email:
-                    try:
-                        send_report_email(email, ipapi_result, abuseipdb_result, shodan_result)
-                        message = f"📧 Rapport envoyé avec succès à {email}"
-                    except Exception as e:
-                        message = f"❌ Erreur lors de l'envoi de l'email : {e}"
-
-                # 🧾 Enregistrement du log
-                save_full_log(
-                    email=email,
-                    user_ip=user_ip,
-                    scanned_ip=ip,
-                    ipapi_data=ipapi_result,
-                    abuseipdb_data=abuseipdb_result,
-                    shodan_data=shodan_result
-                )
-
-            except Exception as e:
-                message = f"❌ Une erreur est survenue : {e}"
-
-    return render_template("index.html",
-        ipapi_result=ipapi_result,
-        abuseipdb_result=abuseipdb_result,
-        shodan_result=shodan_result,
-        message=message
-    )
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    print(f"[✔] Log enregistré : {filepath}")
