@@ -5,16 +5,16 @@ from services.ipapi_service import scan_ip
 from services.abuseipdb_service import get_abuseipdb_data
 from services.shodan_service import get_shodan_info
 from services.email_service import send_report_email, init_mail
-from log_service import save_full_log  # Adapté selon ton arborescence
+from log_service import save_full_log  # ⚠️ adapte selon ton arborescence
 from dotenv import load_dotenv
 import os
 
-# Chargement des variables d’environnement
+# Chargement des variables d’environnement (.env)
 load_dotenv()
 
 # Initialisation de l'application Flask
 app = Flask(__name__)
-init_mail(app)
+init_mail(app)  # Configuration du mail via Flask-Mail
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -30,12 +30,12 @@ def index():
 
         if ip:
             try:
-                # 🔍 Appels aux services d'analyse
+                # 🔍 Appels aux services de scan
                 ipapi_result = scan_ip(ip)
                 abuseipdb_result = get_abuseipdb_data(ip)
                 shodan_result = get_shodan_info(ip)
 
-                # 📤 Envoi du rapport par mail
+                # 📧 Envoi du rapport par mail (si email fourni)
                 if email:
                     try:
                         send_report_email(email, ipapi_result, abuseipdb_result, shodan_result)
@@ -43,7 +43,7 @@ def index():
                     except Exception as e:
                         message = f"❌ Erreur lors de l'envoi de l'email : {e}"
 
-                # 🧾 Enregistrement du log
+                # 🧾 Enregistrement d’un log complet
                 save_full_log(
                     email=email,
                     user_ip=user_ip,
@@ -63,7 +63,7 @@ def index():
         message=message
     )
 
-# Démarrage dynamique : compatible local + Railway
+# 🔁 Lancement dynamique : Railway attribue un port à chaque build
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Railway fournit un port via env
+    port = int(os.environ.get("PORT", 5000))  # par défaut 5000 en local
     app.run(host="0.0.0.0", port=port)
