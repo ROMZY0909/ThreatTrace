@@ -1,4 +1,4 @@
-# app.py
+# Redeploy trigger for Railway
 
 from flask import Flask, render_template, request
 from services.ipapi_service import get_ipapi_data as scan_ip
