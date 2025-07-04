@@ -11,3 +11,6 @@ __pycache__/
 # 💻 Fichiers système (macOS, Windows)
 .DS_Store
 Thumbs.db
+
+# 📄 Logs générés par l’application
+logs/
