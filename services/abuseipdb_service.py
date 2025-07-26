@@ -1,33 +1,30 @@
-## === services/abuseipdb_service.py ===
 import requests
 import os
 
-def get_abuseipdb_data(ip):
+def get_abuseipdb_report(ip_address):
     try:
-        API_KEY = os.getenv("ABUSEIPDB_API_KEY")
-        url = f"https://api.abuseipdb.com/api/v2/check?ipAddress={ip}&maxAgeInDays=90"
+        api_key = os.getenv("ABUSEIPDB_API_KEY")
+        if not api_key:
+            return {"error": "Clé API AbuseIPDB manquante dans .env"}
+
+        url = "https://api.abuseipdb.com/api/v2/check"
         headers = {
-            "Key": API_KEY,
+            "Key": api_key,
             "Accept": "application/json"
         }
-        response = requests.get(url, headers=headers, timeout=10)
+        params = {
+            "ipAddress": ip_address,
+            "maxAgeInDays": "90"
+        }
+
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+
         if response.status_code == 200:
             return response.json().get("data", {})
         else:
-            return {"error": "Erreur AbuseIPDB"}
+            return {
+                "error": f"Erreur AbuseIPDB : statut HTTP {response.status_code} - {response.text}"
+            }
+
     except Exception as e:
-        return {"error": f"Erreur AbuseIPDB: {str(e)}"}
-
-
-## === services/shodan_service.py ===
-import shodan
-import os
-
-def get_shodan_data(ip):
-    try:
-        SHODAN_API_KEY = os.getenv("SHODAN_API_KEY")
-        api = shodan.Shodan(SHODAN_API_KEY)
-        result = api.host(ip)
-        return result
-    except shodan.APIError as e:
-        return {"error": str(e)}
+        return {"error": f"Erreur AbuseIPDB : {str(e)}"}

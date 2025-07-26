@@ -1,71 +1,159 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ThreatTrace AI</title>
+    <title>ThreatTrace AI - Analyse IP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #0f0f0f;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
             color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 28px;
         }
-        h1, h2 {
-            color: #00ff99;
-            text-shadow: 0 0 5px #00ffcc;
+
+        h2 {
+            color: #39ff14;
+            margin-bottom: 15px;
         }
+
         form {
-            background-color: #1a1a1a;
-            padding: 1rem;
-            border: 1px solid #00ffcc;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
         }
-        input, button {
-            background-color: #0f0f0f;
-            border: 1px solid #00ffcc;
+
+        input[type="text"] {
+            padding: 12px;
+            width: 350px;
+            background-color: #161b22;
             color: #00ffcc;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-            width: 100%;
-        }
-        pre {
-            background-color: #111;
-            border: 1px solid #00ffcc;
-            padding: 1rem;
+            border: 1px solid #3fb950;
             border-radius: 4px;
-            overflow-x: auto;
+            margin-bottom: 12px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 25px;
+            background-color: #238636;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .block {
+            background-color: #161b22;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #00ffcc;
+            border-radius: 6px;
+            box-shadow: 0 0 5px #00ffcc33;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+
+        li {
+            margin: 6px 0;
+        }
+
+        .success {
+            color: #3fb950;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #ff7b72;
+            background-color: #2d070a;
+            padding: 15px;
+            border-left: 4px solid red;
+            border-radius: 4px;
+        }
+
+        a.map-link {
+            color: #00ffcc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a.map-link:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            color: #58a6ff;
         }
     </style>
 </head>
 <body>
+
     <h1>🛡️ ThreatTrace AI - Analyse IP</h1>
+
     <form method="POST">
-        <label for="ip">Adresse IP :</label>
-        <input type="text" name="ip" id="ip" required>
-        <label for="email">Email (optionnel) :</label>
-        <input type="email" name="email" id="email">
-        <button type="submit">Analyser</button>
+        <input type="text" name="ip" placeholder="Entrez une adresse IP" required><br>
+        <input type="text" name="email" placeholder="Email pour recevoir le rapport (optionnel)"><br>
+        <input type="submit" value="Analyser">
     </form>
 
-    {% if message %}
-        <p><strong>{{ message }}</strong></p>
+    {% if message_sent %}
+        <p class="success">✔ Rapport envoyé par email avec succès.</p>
     {% endif %}
 
-    {% if ipapi_result %}
-        <h2>🌐 IP-API</h2>
-        <pre>{{ ipapi_result }}</pre>
+    {% if result %}
+        {% if result.error %}
+            <div class="block error">
+                <strong>Erreur :</strong> {{ result.error }}
+            </div>
+        {% endif %}
+
+        <div class="block">
+            <h2>🌍 Résultats IP-API</h2>
+            <ul>
+                {% for key, value in result.ipapi.items() %}
+                    <li><strong>{{ key | replace('_', ' ') | capitalize }} :</strong> {{ value }}</li>
+                {% endfor %}
+                {% if result.ipapi.google_maps_link %}
+                    <li><a class="map-link" href="{{ result.ipapi.google_maps_link }}" target="_blank">📍 Voir sur Google Maps</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="block">
+            <h2>🚨 Résultats AbuseIPDB</h2>
+            <ul>
+                {% for key, value in result.abuseipdb.items() %}
+                    <li><strong>{{ key | replace('_', ' ') | capitalize }} :</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="block">
+            <h2>🛰️ Résultats Shodan</h2>
+            <ul>
+                {% for key, value in result.shodan.items() %}
+                    <li><strong>{{ key | replace('_', ' ') | capitalize }} :</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="block">
+            <h2>🧠 Analyse par IA</h2>
+            <p>{{ result.summary }}</p>
+        </div>
     {% endif %}
 
-    {% if abuseipdb_result %}
-        <h2>🚨 AbuseIPDB</h2>
-        <pre>{{ abuseipdb_result }}</pre>
-    {% endif %}
-
-    {% if shodan_result %}
-        <h2>🔍 Shodan</h2>
-        <pre>{{ shodan_result }}</pre>
-    {% endif %}
 </body>
 </html>
